@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Build Your First Web App Using AI — Series 1 | Aufthority</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f7f5f0;
+      --ink: #1a1a18;
+      --muted: #6b6b62;
+      --accent: #2d6a4f;
+      --accent-light: #e8f5ee;
+      --rule: #e0ddd5;
+      --card-bg: #ffffff;
+      --radius: 2px;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #141412;
+        --ink: #f0ede6;
+        --muted: #9a9a8e;
+        --accent: #52b788;
+        --accent-light: #1a2e24;
+        --rule: #2a2a26;
+        --card-bg: #1e1e1a;
+      }
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .container {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 0 28px;
+    }
+
+    nav {
+      padding: 28px 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .logo {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.15rem;
+      letter-spacing: 0.01em;
+      color: var(--ink);
+      text-decoration: none;
+      flex-shrink: 0;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 20px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-size: 0.76rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover,
+    .nav-links a.active { color: var(--accent); }
+
+    .breadcrumb {
+      padding: 20px 0 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      opacity: 0;
+      animation: fadeUp 0.5s ease forwards 0.05s;
+    }
+
+    .breadcrumb a { font-size: 0.75rem; color: var(--muted); text-decoration: none; transition: color 0.2s; }
+    .breadcrumb a:hover { color: var(--accent); }
+    .breadcrumb span { font-size: 0.75rem; color: var(--rule); }
+    .breadcrumb-current { font-size: 0.75rem; color: var(--muted); }
+
+    .hero {
+      padding: 48px 0 48px;
+      opacity: 0;
+      transform: translateY(18px);
+      animation: fadeUp 0.7s ease forwards 0.1s;
+    }
+
+    .hero-eyebrow {
+      font-size: 0.72rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+
+    .hero h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(1.9rem, 5vw, 2.8rem);
+      line-height: 1.2;
+      letter-spacing: -0.01em;
+      color: var(--ink);
+      margin-bottom: 24px;
+    }
+
+    .hero h1 em { font-style: italic; color: var(--accent); }
+
+    .meta-strip {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 32px;
+    }
+
+    .meta-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.76rem;
+      font-weight: 400;
+      color: var(--muted);
+      background: var(--card-bg);
+      border: 1px solid var(--rule);
+      border-radius: 20px;
+      padding: 4px 12px;
+    }
+
+    .meta-pill.highlight {
+      background: var(--accent-light);
+      border-color: var(--accent);
+      color: var(--accent);
+      font-weight: 500;
+    }
+
+    .quick-register {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      background: var(--card-bg);
+      border: 1px solid var(--rule);
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      margin-bottom: 48px;
+      position: relative;
+      overflow: hidden;
+      opacity: 0;
+      transform: translateY(18px);
+      animation: fadeUp 0.7s ease forwards 0.2s;
+    }
+
+    .quick-register::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 3px;
+      background: linear-gradient(90deg, var(--accent), #74c69d);
+    }
+
+    .quick-register-left { flex: 1; }
+
+    .quick-price {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.8rem;
+      color: var(--ink);
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .quick-price-sub { font-size: 0.78rem; color: var(--muted); }
+
+    .register-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: var(--ink);
+      color: var(--bg);
+      text-decoration: none;
+      padding: 13px 22px;
+      font-size: 0.82rem;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      border-radius: var(--radius);
+      transition: background 0.2s, transform 0.15s;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .register-btn:hover { background: var(--accent); transform: translateY(-1px); }
+
+    .section {
+      padding: 56px 0;
+      border-top: 1px solid var(--rule);
+      opacity: 0;
+      transform: translateY(18px);
+      animation: fadeUp 0.7s ease forwards;
+    }
+
+    .section:nth-of-type(1) { animation-delay: 0.3s; }
+    .section:nth-of-type(2) { animation-delay: 0.38s; }
+    .section:nth-of-type(3) { animation-delay: 0.46s; }
+    .section:nth-of-type(4) { animation-delay: 0.54s; }
+    .section:nth-of-type(5) { animation-delay: 0.62s; }
+
+    .section-label {
+      font-size: 0.68rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--muted);
+      margin-bottom: 28px;
+    }
+
+    .section h2 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.5rem;
+      color: var(--ink);
+      margin-bottom: 20px;
+      line-height: 1.3;
+    }
+
+    .body-text { font-size: 0.97rem; color: var(--ink); line-height: 1.8; }
+    .body-text p + p { margin-top: 14px; }
+
+    .outcome-list { display: flex; flex-direction: column; gap: 12px; }
+
+    .outcome-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 16px 20px;
+      background: var(--card-bg);
+      border: 1px solid var(--rule);
+      border-radius: var(--radius);
+    }
+
+    .outcome-num {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.3rem;
+      color: var(--accent);
+      line-height: 1;
+      flex-shrink: 0;
+      width: 28px;
+      padding-top: 2px;
+    }
+
+    .outcome-text { font-size: 0.9rem; color: var(--ink); line-height: 1.5; }
+    .outcome-text strong { font-weight: 500; display: block; margin-bottom: 2px; }
+
+    .for-list { display: flex; flex-direction: column; gap: 10px; }
+
+    .for-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      font-size: 0.92rem;
+      color: var(--ink);
+      line-height: 1.5;
+    }
+
+    .for-check { color: var(--accent); font-size: 1rem; flex-shrink: 0; margin-top: 2px; }
+
+    .schedule-list { display: flex; flex-direction: column; position: relative; }
+
+    .schedule-list::before {
+      content: '';
+      position: absolute;
+      left: 15px; top: 8px; bottom: 8px;
+      width: 1px;
+      background: var(--rule);
+    }
+
+    .schedule-item { display: flex; gap: 20px; padding: 16px 0; position: relative; }
+
+    .schedule-dot {
+      width: 31px; height: 31px;
+      border-radius: 50%;
+      background: var(--accent-light);
+      border: 2px solid var(--accent);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; z-index: 1;
+    }
+
+    .schedule-dot span { font-size: 0.65rem; font-weight: 500; color: var(--accent); }
+    .schedule-content { padding-top: 4px; }
+
+    .schedule-time {
+      font-size: 0.72rem; font-weight: 500;
+      text-transform: uppercase; letter-spacing: 0.1em;
+      color: var(--accent); margin-bottom: 3px;
+    }
+
+    .schedule-title { font-size: 0.95rem; color: var(--ink); font-weight: 400; }
+    .schedule-desc { font-size: 0.82rem; color: var(--muted); margin-top: 2px; line-height: 1.5; }
+
+    .faq-list { display: flex; flex-direction: column; }
+    .faq-item { border-bottom: 1px solid var(--rule); padding: 18px 0; }
+    .faq-q { font-size: 0.95rem; font-weight: 500; color: var(--ink); margin-bottom: 8px; }
+    .faq-a { font-size: 0.88rem; color: var(--muted); line-height: 1.6; }
+
+    /* Register section with Tally embed */
+    .register-section {
+      padding: 56px 0 0;
+      border-top: 1px solid var(--rule);
+      opacity: 0;
+      transform: translateY(18px);
+      animation: fadeUp 0.7s ease forwards 0.72s;
+    }
+
+    .register-section h2 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.5rem;
+      color: var(--ink);
+      margin-bottom: 8px;
+      line-height: 1.3;
+    }
+
+    .register-section > p {
+      font-size: 0.88rem;
+      color: var(--muted);
+      margin-bottom: 28px;
+      line-height: 1.6;
+    }
+
+    .tally-wrapper {
+      background: var(--card-bg);
+      border: 1px solid var(--rule);
+      border-radius: var(--radius);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .tally-wrapper::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 3px;
+      background: linear-gradient(90deg, var(--accent), #74c69d);
+      z-index: 1;
+    }
+
+    footer {
+      padding: 40px 0 48px;
+      border-top: 1px solid var(--rule);
+      margin-top: 56px;
+      opacity: 0;
+      animation: fadeUp 0.7s ease forwards 0.9s;
+    }
+
+    .footer-bottom { display: flex; align-items: center; justify-content: space-between; }
+    .footer-copy { font-size: 0.78rem; color: var(--muted); }
+    .footer-tagline {
+      font-family: 'DM Serif Display', serif;
+      font-size: 0.82rem; font-style: italic; color: var(--muted);
+    }
+
+    @keyframes fadeUp {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 500px) {
+      nav { flex-direction: column; align-items: flex-start; gap: 16px; padding-bottom: 20px; }
+      .nav-links { gap: 14px; flex-wrap: wrap; }
+      .nav-links a { font-size: 0.7rem; }
+      .quick-register { flex-direction: column; align-items: flex-start; gap: 16px; }
+      .register-btn { width: 100%; justify-content: center; }
+      .footer-bottom { flex-direction: column; gap: 8px; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <nav>
+      <a href="https://www.aufthority.com" class="logo">Aufthority</a>
+      <ul class="nav-links">
+        <li><a href="https://www.aufthority.com#about">About</a></li>
+        <li><a href="https://www.aufthority.com#apps">Apps</a></li>
+        <li><a href="https://www.aufthority.com#newsletter">Newsletter</a></li>
+        <li><a href="../" class="active">Courses</a></li>
+      </ul>
+    </nav>
+
+    <div class="breadcrumb">
+      <a href="../">Courses</a>
+      <span>/</span>
+      <span class="breadcrumb-current">Web App AI — Series 1</span>
+    </div>
+
+    <header class="hero">
+      <p class="hero-eyebrow">Live Workshop · Series 1</p>
+      <h1>Build Your First<br>Web App <em>Using AI</em></h1>
+      <div class="meta-strip">
+        <span class="meta-pill highlight">📅 26 April 2026 · Sunday</span>
+        <span class="meta-pill highlight">⏱ 10 AM – 1 PM</span>
+        <span class="meta-pill">🎥 Google Meet</span>
+        <span class="meta-pill">👥 Small Cohort</span>
+        <span class="meta-pill">🇲🇾 BM / English</span>
+      </div>
+    </header>
+
+    <!-- Price + anchor CTA -->
+    <div class="quick-register">
+      <div class="quick-register-left">
+        <div class="quick-price">RM 97</div>
+        <div class="quick-price-sub">per seat · limited spots</div>
+      </div>
+      <a href="#register" class="register-btn">Reserve My Seat →</a>
+    </div>
+
+    <!-- What you'll build -->
+    <section class="section">
+      <p class="section-label">What You'll Build</p>
+      <h2>A real, working web app — in 3 hours.</h2>
+      <div class="body-text" style="margin-bottom: 28px;">
+        <p>This is a hands-on, build-along workshop. By the end of the session, you will have a live, deployed web application — one you built yourself, with AI as your co-pilot.</p>
+      </div>
+      <div class="outcome-list">
+        <div class="outcome-item">
+          <span class="outcome-num">1</span>
+          <div class="outcome-text">
+            <strong>A functional web app</strong>
+            Built from scratch during the session. Yours to keep, modify, and share.
+          </div>
+        </div>
+        <div class="outcome-item">
+          <span class="outcome-num">2</span>
+          <div class="outcome-text">
+            <strong>A live public URL</strong>
+            We'll deploy it together. By the end, your app is accessible on the internet.
+          </div>
+        </div>
+        <div class="outcome-item">
+          <span class="outcome-num">3</span>
+          <div class="outcome-text">
+            <strong>A repeatable workflow</strong>
+            You'll leave knowing exactly how to build and deploy your next app on your own.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Who it's for -->
+    <section class="section">
+      <p class="section-label">Who This Is For</p>
+      <h2>No coding experience required.</h2>
+      <div class="for-list">
+        <div class="for-item"><span class="for-check">✓</span><span>You have an idea for a tool, app, or project and don't know how to build it</span></div>
+        <div class="for-item"><span class="for-check">✓</span><span>You've tried to learn coding before but got stuck or lost motivation</span></div>
+        <div class="for-item"><span class="for-check">✓</span><span>You want to understand how AI tools like Claude or ChatGPT can actually build things</span></div>
+        <div class="for-item"><span class="for-check">✓</span><span>You're a writer, creator, healthcare professional, or entrepreneur who wants a technical edge</span></div>
+        <div class="for-item"><span class="for-check">✓</span><span>You want to walk away with something real — not just slides and theory</span></div>
+      </div>
+    </section>
+
+    <!-- Session outline -->
+    <section class="section">
+      <p class="section-label">Session Outline</p>
+      <h2>3 hours, start to finish.</h2>
+      <div class="schedule-list">
+        <div class="schedule-item">
+          <div class="schedule-dot"><span>00</span></div>
+          <div class="schedule-content">
+            <p class="schedule-time">10:00 AM · Intro</p>
+            <p class="schedule-title">Setup & mindset</p>
+            <p class="schedule-desc">Tools we'll use, how AI-assisted development actually works, and what we're building today.</p>
+          </div>
+        </div>
+        <div class="schedule-item">
+          <div class="schedule-dot"><span>01</span></div>
+          <div class="schedule-content">
+            <p class="schedule-time">11:00 AM · Build</p>
+            <p class="schedule-title">Building with AI — live</p>
+            <p class="schedule-desc">We write prompts, generate code, understand what it does, and shape the app together.</p>
+          </div>
+        </div>
+        <div class="schedule-item">
+          <div class="schedule-dot"><span>02</span></div>
+          <div class="schedule-content">
+            <p class="schedule-time">12:00 PM · Refine</p>
+            <p class="schedule-title">Iteration & problem-solving</p>
+            <p class="schedule-desc">Fixing issues, improving the UI, and making it feel like a real product.</p>
+          </div>
+        </div>
+        <div class="schedule-item">
+          <div class="schedule-dot"><span>03</span></div>
+          <div class="schedule-content">
+            <p class="schedule-time">12:30 PM · Ship</p>
+            <p class="schedule-title">Deploy & wrap-up</p>
+            <p class="schedule-desc">We deploy your app live. Q&A, what's next, and how to keep building on your own.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="section">
+      <p class="section-label">FAQ</p>
+      <div class="faq-list">
+        <div class="faq-item">
+          <p class="faq-q">Do I need to know how to code?</p>
+          <p class="faq-a">No. This workshop is designed for complete beginners. If you can use a browser and type, you can follow along.</p>
+        </div>
+        <div class="faq-item">
+          <p class="faq-q">What tools will we use?</p>
+          <p class="faq-a">We'll use AI tools (Claude/ChatGPT), a free code editor, and GitHub Pages for deployment. All free, all browser-based — nothing to install beforehand.</p>
+        </div>
+        <div class="faq-item">
+          <p class="faq-q">What kind of app will we build?</p>
+          <p class="faq-a">A practical, shareable web tool — details revealed on the day. It's designed so that everyone can follow along regardless of their background.</p>
+        </div>
+        <div class="faq-item">
+          <p class="faq-q">Will I get a recording?</p>
+          <p class="faq-a">The session is live and interactive — that's intentional. There is no recording, which is why seats are limited and the price reflects that access.</p>
+        </div>
+        <div class="faq-item">
+          <p class="faq-q">What happens after I register?</p>
+          <p class="faq-a">Fill in the form below, pay via ToyyibPay, and upload your payment receipt. I'll send the Google Meet link to your email before the session.</p>
+        </div>
+        <div class="faq-item">
+          <p class="faq-q">Is there a refund policy?</p>
+          <p class="faq-a">If you can't make it, contact me at least 48 hours before the session and I'll move you to the next cohort. No cash refunds, but your seat won't go to waste.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Registration — Tally embed -->
+    <div class="register-section" id="register">
+      <p class="section-label">Register</p>
+      <h2>Secure your seat.</h2>
+      <p>Fill in your details, pay via ToyyibPay, and upload your receipt. I'll send the Google Meet link to your email before the session.</p>
+      <div class="tally-wrapper">
+        <iframe
+          data-tally-src="https://tally.so/embed/2Ex4vb?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1"
+          loading="lazy"
+          width="100%"
+          height="400"
+          frameborder="0"
+          marginheight="0"
+          marginwidth="0"
+          title="Register: Build Your First Web App Using AI"
+          style="display:block; padding-top: 8px;"
+        ></iframe>
+      </div>
+    </div>
+
+    <footer>
+      <div class="footer-bottom">
+        <span class="footer-copy">© 2026 Aufthority</span>
+        <span class="footer-tagline">Informed decisions, better health.</span>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- Tally embed script — auto-resizes iframe to form height -->
+  <script>
+    var d = document, w = "https://tally.so/widgets/embed.js",
+    v = function() {
+      if (typeof Tally !== "undefined") {
+        Tally.loadEmbeds();
+      } else {
+        d.querySelectorAll("iframe[data-tally-src]:not([src])").forEach(function(e) {
+          e.src = e.dataset.tallySrc;
+        });
+      }
+    };
+    if (d.querySelector('script[src="' + w + '"]') === null) {
+      var s = d.createElement("script");
+      s.src = w; s.onload = v; s.onerror = v; d.body.appendChild(s);
+    } else { v(); }
+  </script>
+</body>
+</html>
